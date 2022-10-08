@@ -1,14 +1,29 @@
 # 更新日志
 
-## v5.0.0-beta.0
+## v5.0.2
+
+`2022-10-07`
+
+- 修复首次运行 dev 时 vite 引入了两份 Vue 代码导致渲染失败的问题
+
+## v5.0.1
+
+`2022-10-06`
+
+- 修复 jest 版本未正确升级的问题
+
+## v5.0.0
 
 ### 依赖升级
 
+`2022-10-06`
+
 对以下依赖进行了大版本升级：
 
-- vite v3
-- @vitejs/plugin-vue v3
-- @vitejs/plugin-vue-jsx v2
+- vite: 由 v2 升级至 v3
+- jest: 由 v27 升级至 v29
+- @vitejs/plugin-vue: 由 v2 升级至 v3
+- @vitejs/plugin-vue-jsx: 由 v1 升级至 v2
 
 ### 依赖精简
 

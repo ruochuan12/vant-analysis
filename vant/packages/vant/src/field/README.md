@@ -241,6 +241,21 @@ Use `input-align` prop to align the input value.
 </van-cell-group>
 ```
 
+### Label Align
+
+Use `label-align` prop to align the input value.
+
+```html
+<van-cell-group inset>
+  <van-field
+    v-model="value"
+    label="Tel"
+    placeholder="Please input tel number"
+    input-align="top"
+  />
+</van-cell-group>
+```
+
 ## API
 
 ### Props
@@ -276,7 +291,7 @@ Use `input-align` prop to align the input value.
 | arrow-direction | Can be set to `left` `up` `down` | _string_ | `right` |
 | label-class | Label className | _string \| Array \| object_ | - |
 | label-width | Label width | _number \| string_ | `6.2em` |
-| label-align | Label align, can be set to `center` `right` | _FieldTextAlign_ | `left` |
+| label-align | Label align, can be set to `center` `right` `top` | _FieldTextAlign_ | `left` |
 | input-align | Input align, can be set to `center` `right` | _FieldTextAlign_ | `left` |
 | autosize | Textarea auto resize, can accept an object,<br>e.g. { maxHeight: 100, minHeight: 50 } | _boolean \| FieldAutosizeConfig_ | `false` |
 | left-icon | Left side icon name | _string_ | - |

@@ -107,6 +107,7 @@ export default {
 | placeholder | 固定在顶部时，是否在标签位置生成一个等高的占位元素 | _boolean_ | `false` |
 | z-index | 导航栏 z-index | _number \| string_ | `1` |
 | safe-area-inset-top | 是否开启[顶部安全区适配](#/zh-CN/advanced-usage#di-bu-an-quan-qu-gua-pei) | _boolean_ | `false` |
+| clickable | 是否开启两侧按钮的点击反馈 | _boolean_ | `true` |
 
 ### Slots
 

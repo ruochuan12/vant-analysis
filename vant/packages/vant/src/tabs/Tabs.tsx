@@ -230,7 +230,14 @@ export default defineComponent({
       const newName = getTabName(newTab, newIndex);
       const shouldEmitChange = state.currentIndex !== null;
 
-      state.currentIndex = newIndex;
+      if (state.currentIndex !== newIndex) {
+        state.currentIndex = newIndex;
+
+        if (!skipScrollIntoView) {
+          scrollIntoView();
+        }
+        setLine();
+      }
 
       if (newName !== props.active) {
         emit('update:active', newName);
@@ -239,11 +246,6 @@ export default defineComponent({
           emit('change', newName, newTab.title);
         }
       }
-
-      if (!skipScrollIntoView) {
-        scrollIntoView();
-      }
-      setLine();
 
       // scroll to correct position
       if (stickyFixed && !props.scrollspy) {
@@ -384,10 +386,11 @@ export default defineComponent({
     };
 
     const renderHeader = () => {
-      const { type, border } = props;
-      return (
+      const { type, border, sticky } = props;
+
+      const Header = [
         <div
-          ref={wrapRef}
+          ref={sticky ? undefined : wrapRef}
           class={[
             bem('wrap'),
             { [BORDER_TOP_BOTTOM]: type === 'line' && border },
@@ -408,8 +411,14 @@ export default defineComponent({
             {renderLine()}
             {slots['nav-right']?.()}
           </div>
-        </div>
-      );
+        </div>,
+        slots['nav-bottom']?.(),
+      ];
+
+      if (sticky) {
+        return <div ref={wrapRef}>{Header}</div>;
+      }
+      return Header;
     };
 
     watch([() => props.color, windowWidth], setLine);
@@ -486,10 +495,9 @@ export default defineComponent({
             onScroll={onStickyScroll}
           >
             {renderHeader()}
-            {slots['nav-bottom']?.()}
           </Sticky>
         ) : (
-          [renderHeader(), slots['nav-bottom']?.()]
+          renderHeader()
         )}
         <TabsContent
           ref={contentRef}

@@ -260,6 +260,21 @@ export default {
 </van-cell-group>
 ```
 
+### 输入框文本位置
+
+通过 `label-align` 属性可以设置输入框文本的位置，可选值为 `center`、`right`、`top`。
+
+```html
+<van-cell-group inset>
+  <van-field
+    v-model="value"
+    label="手机号"
+    placeholder="请输入手机号"
+    input-align="top"
+  />
+</van-cell-group>
+```
+
 ## API
 
 ### Props
@@ -295,7 +310,7 @@ export default {
 | arrow-direction | 箭头方向，可选值为 `left` `up` `down` | _string_ | `right` |
 | label-class | 左侧文本额外类名 | _string \| Array \| object_ | - |
 | label-width | 左侧文本宽度，默认单位为 `px` | _number \| string_ | `6.2em` |
-| label-align | 左侧文本对齐方式，可选值为 `center` `right` | _FieldTextAlign_ | `left` |
+| label-align | 左侧文本对齐方式，可选值为 `center` `right` `top` | _FieldTextAlign_ | `left` |
 | input-align | 输入框对齐方式，可选值为 `center` `right` | _FieldTextAlign_ | `left` |
 | autosize | 是否自适应内容高度，只对 textarea 有效，<br>可传入对象,如 { maxHeight: 100, minHeight: 50 }，<br>单位为`px` | _boolean \| FieldAutosizeConfig_ | `false` |
 | left-icon | 左侧图标名称或图片链接，等同于 Icon 组件的 [name 属性](#/zh-CN/icon#props) | _string_ | - |
