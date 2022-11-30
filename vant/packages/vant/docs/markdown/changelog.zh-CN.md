@@ -19,6 +19,46 @@ Vant 遵循 [Semver](https://semver.org/lang/zh-CN/) 语义化版本规范。
 
 ## 更新内容
 
+### [v4.0.0](https://github.com/vant-ui/vant/compare/v4.0.0-rc.9...v4.0.0)
+
+`2022-11-26`
+
+> Vant 4.0 的完整更新日志正在整理中，请先阅读 [「从 v3 升级到 v4」](#/zh-CN/migrate-from-v3) 进行升级。
+
+**Feature**
+
+- List: 新增 disabled 属性 [#11307](https://github.com/vant-ui/vant/issues/11307)
+- BackTop: 支持动态设置 target 属性 [#11311](https://github.com/vant-ui/vant/issues/11311)
+- BackTop: 支持通过 CSS 变量修改组件位置 [#11312](https://github.com/vant-ui/vant/issues/11312)
+- BackTop: 重命名 visibility-height 属性为 offset [#11309](https://github.com/vant-ui/vant/issues/11309)
+
+**Bug Fixes**
+
+- Field: 修复格式化值后，光标位置错误的问题 [#11308](https://github.com/vant-ui/vant/issues/11308)
+
+### [v4.0.0-rc.9](https://github.com/vant-ui/vant/compare/v4.0.0-rc.8...v4.0.0-rc.9)
+
+`2022-11-24`
+
+**Bug Fixes**
+
+- Cell: 修复 arrow-direction 设置为 right 不显示的问题 [#11279](https://github.com/vant-ui/vant/issues/11279)
+- Style: 修复 body 标签上的 normalize 样式未生效的问题 [#11287](https://github.com/vant-ui/vant/issues/11287)
+
+### [v4.0.0-rc.8](https://github.com/vant-ui/vant/compare/v4.0.0-rc.7...v4.0.0-rc.8)
+
+`2022-11-20`
+
+**Feature**
+
+- 新增 BackTop 回到顶部组件，注意该新组件的 API 尚未稳定，在 4.0 正式版发布前仍可能产生 breaking change [#11236](https://github.com/vant-ui/vant/issues/11236)
+
+**Bug Fixes**
+
+- DropdownItem: 修复使用 teleport 时无法设置 attr 的问题 [#11273](https://github.com/vant-ui/vant/issues/11273)
+- List: 修复初始的 loading 值为 true 时加载错误的问题 [#11275](https://github.com/vant-ui/vant/issues/11275)
+- NumberKeyboard: 修复使用 teleport 时无法设置 attr 的问题 [#11274](https://github.com/vant-ui/vant/issues/11274)
+
 ### [v4.0.0-rc.7](https://github.com/vant-ui/vant/compare/v4.0.0-rc.6...v4.0.0-rc.7)
 
 `2022-11-13`
