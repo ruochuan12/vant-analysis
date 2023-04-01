@@ -224,7 +224,7 @@ const Loading = () => import("/@fs/Users/ruochuan/git-source/github-ruochuan12/v
 
 果然，确实是我们在前文猜测路径 `vant/packages/vant/src/loading/demo/index.vue`。
 
-小结：通过路由 `/loading` 匹配组件 `demos` 中的组件 `Loading` `component: () => import('xxx/loading/demo/index.vue')`，`<router-view>` 传递给 `v-slot` `Component` `<component :is="Component" />` 属性渲染，不得不说秒啊。
+小结：通过路由 `/loading` 匹配组件 `demos` 中的组件 `Loading` `component: () => import('xxx/loading/demo/index.vue')`，`<router-view>` 传递给 `v-slot` `Component` `<component :is="Component" />` 属性渲染，不得不说妙啊。
 
 接着我们继续来看，`loading` 的 `demo` 文件。
 
