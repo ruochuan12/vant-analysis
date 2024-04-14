@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install pnpm
+      run: corepack enable
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Run linter
+      run: npm run lint
+
+  test:
+    runs-on: macos-14
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install pnpm
+      run: corepack enable
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Run test cases
+      run: pnpm run test:coverage
+
+    - name: Upload coverage to Codecov  
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        directory: ./packages/vant/test/coverage
+
+  build:
+    runs-on: macos-14
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install pnpm
+      run: corepack enable
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Build
+      run: npm run build

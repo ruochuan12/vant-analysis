@@ -1,0 +1,13 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should validate contact name before submitting form 1`] = `
+<div class="van-field__error-message">
+  Please fill in the name
+</div>
+`;
+
+exports[`should validate contact tel before submitting form 1`] = `
+<div class="van-field__error-message">
+  Malformed phone number
+</div>
+`;

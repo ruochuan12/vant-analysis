@@ -1,0 +1,47 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should render demo and match snapshot 1`] = `
+<!--[-->
+<div>
+  <!--[-->
+  <button
+    type="button"
+    class="van-button van-button--primary van-button--normal"
+    style="margin-left:16px;"
+  >
+    <div class="van-button__content">
+      <span class="van-button__text">
+        Show Overlay
+      </span>
+    </div>
+  </button>
+</div>
+<div>
+  <!--[-->
+  <button
+    type="button"
+    class="van-button van-button--primary van-button--normal"
+    style="margin-left:16px;"
+  >
+    <div class="van-button__content">
+      <span class="van-button__text">
+        Embedded Content
+      </span>
+    </div>
+  </button>
+</div>
+<div>
+  <!--[-->
+  <button
+    type="button"
+    class="van-button van-button--primary van-button--normal"
+    style="margin-left:16px;"
+  >
+    <div class="van-button__content">
+      <span class="van-button__text">
+        Set z-index
+      </span>
+    </div>
+  </button>
+</div>
+`;

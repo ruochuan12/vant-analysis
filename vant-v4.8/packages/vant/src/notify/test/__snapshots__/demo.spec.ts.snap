@@ -1,0 +1,136 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should render demo and match snapshot 1`] = `
+<div>
+  <div
+    class="van-cell van-cell--clickable"
+    role="button"
+    tabindex="0"
+  >
+    <div class="van-cell__title">
+      <span>
+        Basic Usage
+      </span>
+    </div>
+    <i class="van-badge__wrapper van-icon van-icon-arrow van-cell__right-icon">
+    </i>
+  </div>
+</div>
+<div>
+  <div
+    class="van-cell van-cell--clickable"
+    role="button"
+    tabindex="0"
+  >
+    <div class="van-cell__title">
+      <span>
+        Primary
+      </span>
+    </div>
+    <i class="van-badge__wrapper van-icon van-icon-arrow van-cell__right-icon">
+    </i>
+  </div>
+  <div
+    class="van-cell van-cell--clickable"
+    role="button"
+    tabindex="0"
+  >
+    <div class="van-cell__title">
+      <span>
+        Success
+      </span>
+    </div>
+    <i class="van-badge__wrapper van-icon van-icon-arrow van-cell__right-icon">
+    </i>
+  </div>
+  <div
+    class="van-cell van-cell--clickable"
+    role="button"
+    tabindex="0"
+  >
+    <div class="van-cell__title">
+      <span>
+        Danger
+      </span>
+    </div>
+    <i class="van-badge__wrapper van-icon van-icon-arrow van-cell__right-icon">
+    </i>
+  </div>
+  <div
+    class="van-cell van-cell--clickable"
+    role="button"
+    tabindex="0"
+  >
+    <div class="van-cell__title">
+      <span>
+        Warning
+      </span>
+    </div>
+    <i class="van-badge__wrapper van-icon van-icon-arrow van-cell__right-icon">
+    </i>
+  </div>
+</div>
+<div>
+  <div
+    class="van-cell van-cell--clickable"
+    role="button"
+    tabindex="0"
+  >
+    <div class="van-cell__title">
+      <span>
+        Custom Color
+      </span>
+    </div>
+    <i class="van-badge__wrapper van-icon van-icon-arrow van-cell__right-icon">
+    </i>
+  </div>
+  <div
+    class="van-cell van-cell--clickable"
+    role="button"
+    tabindex="0"
+  >
+    <div class="van-cell__title">
+      <span>
+        Custom Position
+      </span>
+    </div>
+    <i class="van-badge__wrapper van-icon van-icon-arrow van-cell__right-icon">
+    </i>
+  </div>
+  <div
+    class="van-cell van-cell--clickable"
+    role="button"
+    tabindex="0"
+  >
+    <div class="van-cell__title">
+      <span>
+        Custom Duration
+      </span>
+    </div>
+    <i class="van-badge__wrapper van-icon van-icon-arrow van-cell__right-icon">
+    </i>
+  </div>
+</div>
+<div>
+  <div
+    class="van-cell van-cell--clickable"
+    role="button"
+    tabindex="0"
+  >
+    <div class="van-cell__title">
+      <span>
+        Use Notify Component
+      </span>
+    </div>
+    <i class="van-badge__wrapper van-icon van-icon-arrow van-cell__right-icon">
+    </i>
+  </div>
+  <transition-stub
+    name="van-popup-slide-top"
+    appear="false"
+    persisted="false"
+    css="true"
+  >
+  </transition-stub>
+</div>
+`;

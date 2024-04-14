@@ -1,0 +1,83 @@
+{
+  "name": "vant",
+  "version": "4.8.11",
+  "description": "Mobile UI Components built on Vue",
+  "main": "lib/vant.cjs.js",
+  "module": "es/index.mjs",
+  "style": "lib/index.css",
+  "typings": "lib/index.d.ts",
+  "unpkg": "lib/vant.min.js",
+  "jsdelivr": "lib/vant.min.js",
+  "files": [
+    "es",
+    "lib"
+  ],
+  "scripts": {
+    "dev": "vant-cli dev",
+    "lint": "vant-cli lint",
+    "test": "vitest run",
+    "build": "vant-cli build",
+    "build:site": "vant-cli build-site",
+    "release": "cp ../../README.md ./ && vant-cli release --gitTag && rm ./README.md",
+    "release:site": "pnpm build:site && npx gh-pages -d site-dist --add",
+    "test:update": "vitest run -u",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "open:coverage": "open test/coverage/lcov-report/index.html"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vant-ui/vant.git",
+    "directory": "packages/vant"
+  },
+  "bugs": "https://github.com/vant-ui/vant/issues",
+  "author": "chenjiahan",
+  "license": "MIT",
+  "keywords": [
+    "ui",
+    "vue",
+    "vue3",
+    "mobile",
+    "frontend",
+    "component",
+    "components"
+  ],
+  "dependencies": {
+    "@vant/popperjs": "workspace:^",
+    "@vant/use": "workspace:^",
+    "@vue/shared": "^3.4.21"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.29",
+    "@vant/area-data": "workspace:*",
+    "@vant/cli": "workspace:*",
+    "@vant/eslint-config": "workspace:*",
+    "@vant/icons": "workspace:*",
+    "@vitejs/plugin-vue": "^4.6.2",
+    "@vitejs/plugin-vue-jsx": "^3.1.0",
+    "@vitest/coverage-istanbul": "^1.1.3",
+    "@vue/runtime-core": "^3.4.21",
+    "@vue/test-utils": "^2.4.5",
+    "csstype": "^3.1.3",
+    "diffable-html": "^5.0.0",
+    "jsdom": "^22.1.0",
+    "typescript": "^5.0.4",
+    "vite": "^5.0.12",
+    "vitest": "^1.1.3",
+    "vitest-canvas-mock": "^0.3.3",
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0"
+  },
+  "sideEffects": [
+    "es/**/style/*",
+    "lib/**/style/*",
+    "*.css"
+  ],
+  "web-types": "lib/web-types.json"
+}

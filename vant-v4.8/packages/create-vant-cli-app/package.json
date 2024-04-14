@@ -1,0 +1,45 @@
+{
+  "name": "create-vant-cli-app",
+  "version": "3.0.0",
+  "description": "Create Vant CLI App",
+  "main": "lib/index.js",
+  "bin": {
+    "create-vant-cli-app": "./lib/index.js"
+  },
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "rimraf ./lib && tsc",
+    "release": "vant-cli release",
+    "prepare": "pnpm build"
+  },
+  "files": [
+    "lib",
+    "generators"
+  ],
+  "keywords": [
+    "vant"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vant-ui/vant.git",
+    "directory": "packages/create-vant-cli-app"
+  },
+  "bugs": "https://github.com/vant-ui/vant/issues",
+  "author": "chenjiahan",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "rslog": "^1.2.1",
+    "fast-glob": "^3.3.2",
+    "fs-extra": "^11.2.0",
+    "enquirer": "2.4.1",
+    "picocolors": "^1.0.0"
+  }
+}

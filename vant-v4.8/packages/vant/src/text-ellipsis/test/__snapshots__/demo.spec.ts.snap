@@ -1,0 +1,53 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should render demo and match snapshot 1`] = `
+<div>
+  <div class="van-text-ellipsis">
+    ...
+    <span class="van-text-ellipsis__action">
+    </span>
+  </div>
+</div>
+<div>
+  <div class="van-text-ellipsis">
+    ...
+    <span class="van-text-ellipsis__action">
+      expand
+    </span>
+  </div>
+</div>
+<div>
+  <div class="van-text-ellipsis">
+    ...
+    <span class="van-text-ellipsis__action">
+      expand
+    </span>
+  </div>
+</div>
+<div>
+  <div>
+    <div class="van-text-ellipsis">
+      ...
+      <span class="van-text-ellipsis__action">
+        expand
+      </span>
+    </div>
+  </div>
+  <div>
+    <div class="van-text-ellipsis">
+      ...
+      <span class="van-text-ellipsis__action">
+        expand
+      </span>
+    </div>
+  </div>
+  <div>
+    <div class="van-text-ellipsis">
+      ...
+      <span class="van-text-ellipsis__action">
+        expand
+      </span>
+    </div>
+  </div>
+</div>
+`;

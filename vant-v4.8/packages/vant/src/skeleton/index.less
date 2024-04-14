@@ -1,0 +1,24 @@
+:root,
+:host {
+  --van-skeleton-duration: 1.2s;
+}
+
+.van-skeleton {
+  display: flex;
+  padding: 0 var(--van-padding-md);
+
+  &__content {
+    width: 100%;
+  }
+
+  &--animate {
+    animation: van-skeleton-blink var(--van-skeleton-duration) ease-in-out
+      infinite;
+  }
+}
+
+@keyframes van-skeleton-blink {
+  50% {
+    opacity: 0.6;
+  }
+}
