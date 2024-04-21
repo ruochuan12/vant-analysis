@@ -1,4 +1,4 @@
-# highlight 高亮文本的组件
+# 分析 vant 组件库源码，写一个 highlight 高亮文本的组件
 
 ## 1. 前言
 
@@ -64,8 +64,15 @@ pnpm dev
   "scripts": {
     "prepare": "husky install",
     "dev": "pnpm --dir ./packages/vant dev",
+  },
+  "engines": {
+    "pnpm": ">= 9.0.0"
+  },
+  "packageManager": "pnpm@9.0.4",
 }
 ```
+
+限制了 `pnpm` 版本大于 `9.0.0`，如果运行报版本错误，可以升级（比如：`npm i -g pnpm`） `pnpm` 版本到 `9.x`。
 
 ```json
 // vant-v4.8/packages/vant/package.json
@@ -96,6 +103,36 @@ pnpm dev
 import './lib/cli.js';
 ```
 
+### lib/cli.js
+
+```js
+import { Command } from 'commander';
+import { cliVersion } from './index.js';
+const program = new Command();
+program.version(`@vant/cli ${cliVersion}`);
+program
+    .command('dev')
+    .description('Run dev server')
+    .action(async () => {
+    const { dev } = await import('./commands/dev.js');
+    return dev();
+});
+```
+
+```js
+import { setNodeEnv } from '../common/index.js';
+import { compileSite } from '../compiler/compile-site.js';
+export async function dev() {
+    setNodeEnv('development');
+    await compileSite();
+}
+
+```
+
+<!-- vant-v4.8/packages/vant-cli/lib/compiler/compile-site.js -->
+
+对应的源文件是：`vant-v4.8/packages/vant-cli/src/compiler/compile-site.ts`
+
 我们可以从 [vant-cli changelog](https://github.com/youzan/vant/blob/main/packages/vant-cli/changelog.md)得知，最新7.x版本，采用了 `rsbuild`，作为打包构建工具，弃用了原有的 `vite`。
 
 [rsbuild output.sourceMap](https://rsbuild.dev/zh/config/output/source-map)
@@ -116,21 +153,23 @@ const defaultSourceMap = {
 可以搜索 `vant-v4.8/packages/vant-cli` 项目中的搜索 `sourceMap` 知道配置开启 `sourceMap`。
 
 ```js
-output: {
-    assetPrefix,
-    // make compilation faster
-    sourceMap: {
-        // 代码里是js false，关闭，可以关闭，启用默认值
-        // js: false,
-        css: false,
-    },
+const rsbuildConfig = {
+  // 省略若干代码 ...
+  output: {
+      assetPrefix,
+      // make compilation faster
+      sourceMap: {
+          // 代码里是js false，关闭，可以关闭，启用默认值
+          // js: false,
+          css: false,
+      },
+  }
 }
 ```
 
 往期讲述了很多工具函数和脚手架相关的等，所以在此不再赘述。
 
 ### 3.1 利用 demo 调试源码
-
 
 带着问题我们直接找到 `highlight demo` 文件：`vant/packages/vant/src/highlight/demo/index.vue`。为什么是这个文件，我在之前文章[跟着 vant4 源码学习如何用 vue3+ts 开发一个 loading 组件，仅88行代码](https://juejin.cn/post/7160465286036979748#heading-3)分析了其原理，感兴趣的小伙伴点击查看。这里就不赘述了。
 
@@ -182,6 +221,181 @@ const t = useTranslate({
 
 ## 4. 高亮
 
+```ts
+// vant-v4.8/packages/vant/src/highlight/index.ts
+import { withInstall } from '../utils';
+import _Highlight from './Highlight';
+
+export const Highlight = withInstall(_Highlight);
+export default Highlight;
+
+export { highlightProps } from './Highlight';
+
+export type { HighlightProps } from './Highlight';
+export type { HighlightThemeVars } from './types';
+
+declare module 'vue' {
+  export interface GlobalComponents {
+    vanHighlight: typeof Highlight;
+  }
+}
+```
+
+`withInstall` 函数在之前文章[5.1 withInstall 给组件对象添加 install 方法](https://juejin.cn/post/7160465286036979748#heading-10) 也有分析，这里就不赘述了。
+
+我们可以在这些文件，任意位置加上 `debugger` 调试源码。
+
+例如：
+
+```tsx
+// vant-v4.8/packages/vant/src/highlight/Highlight.tsx
+import {
+  defineComponent,
+  computed,
+  type ExtractPropTypes,
+  type PropType,
+} from 'vue';
+
+import {
+  createNamespace,
+  makeRequiredProp,
+  makeStringProp,
+  truthProp,
+} from '../utils';
+
+const [name, bem] = createNamespace('highlight');
+
+export const highlightProps = {
+  autoEscape: truthProp,
+  caseSensitive: Boolean,
+  highlightClass: String,
+  highlightTag: makeStringProp<keyof HTMLElementTagNameMap>('span'),
+  keywords: makeRequiredProp<PropType<string | string[]>>([String, Array]),
+  sourceString: makeStringProp(''),
+  tag: makeStringProp<keyof HTMLElementTagNameMap>('div'),
+  unhighlightClass: String,
+  unhighlightTag: makeStringProp<keyof HTMLElementTagNameMap>('span'),
+};
+
+export type HighlightProps = ExtractPropTypes<typeof highlightProps>;
+
+export default defineComponent({
+  name,
+
+  props: highlightProps,
+
+  setup(props) {
+    const highlightChunks = computed(() => {
+      const { autoEscape, caseSensitive, keywords, sourceString } = props;
+      const flags = caseSensitive ? 'g' : 'gi';
+      const _keywords = Array.isArray(keywords) ? keywords : [keywords];
+
+      // generate chunks
+      let chunks = _keywords
+        .filter((keyword) => keyword)
+        .reduce<Array<{ start: number; end: number; highlight: boolean }>>(
+          (chunks, keyword) => {
+            if (autoEscape) {
+              keyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+
+            const regex = new RegExp(keyword, flags);
+
+            let match;
+            while ((match = regex.exec(sourceString))) {
+              const start = match.index;
+              const end = regex.lastIndex;
+
+              if (start >= end) {
+                regex.lastIndex++;
+                continue;
+              }
+
+              chunks.push({
+                start,
+                end,
+                highlight: true,
+              });
+            }
+
+            return chunks;
+          },
+          [],
+        );
+
+      // merge chunks
+      chunks = chunks
+        .sort((a, b) => a.start - b.start)
+        .reduce<typeof chunks>((chunks, currentChunk) => {
+          const prevChunk = chunks[chunks.length - 1];
+
+          if (!prevChunk || currentChunk.start > prevChunk.end) {
+            const unhighlightStart = prevChunk ? prevChunk.end : 0;
+            const unhighlightEnd = currentChunk.start;
+
+            if (unhighlightStart !== unhighlightEnd) {
+              chunks.push({
+                start: unhighlightStart,
+                end: unhighlightEnd,
+                highlight: false,
+              });
+            }
+
+            chunks.push(currentChunk);
+          } else {
+            prevChunk.end = Math.max(prevChunk.end, currentChunk.end);
+          }
+
+          return chunks;
+        }, []);
+
+      const lastChunk = chunks[chunks.length - 1];
+
+      if (lastChunk && lastChunk.end < sourceString.length) {
+        chunks.push({
+          start: lastChunk.end,
+          end: sourceString.length,
+          highlight: false,
+        });
+      }
+
+      return chunks;
+    });
+
+    const renderContent = () => {
+      const {
+        sourceString,
+        highlightClass,
+        unhighlightClass,
+        highlightTag,
+        unhighlightTag,
+      } = props;
+
+      return highlightChunks.value.map((chunk) => {
+        const { start, end, highlight } = chunk;
+        const text = sourceString.slice(start, end);
+
+        if (highlight) {
+          return (
+            <highlightTag class={[bem('tag'), highlightClass]}>
+              {text}
+            </highlightTag>
+          );
+        }
+
+        return <unhighlightTag class={unhighlightClass}>{text}</unhighlightTag>;
+      });
+    };
+
+    return () => {
+      const { tag } = props;
+
+      return <tag class={bem()}>{renderContent()}</tag>;
+    };
+  },
+});
+
+```
 
 这段源码是一个 Vue 组件，实现了一个名为 highlight 的高亮组件。以下是对这段源码的分析和 highlight 组件实现原理的概述：
 
@@ -220,4 +434,3 @@ renderContent 函数根据 highlightChunks 的结果在原始字符串中提取�
 最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎 `follow` [我的 github](https://github.com/ruochuan12)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.7k+人）第一的专栏，写有20余篇源码文章。
 
 我倾力持续组织了3年多[每周大家一起学习200行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。
-
