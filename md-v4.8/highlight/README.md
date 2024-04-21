@@ -96,6 +96,37 @@ pnpm dev
 import './lib/cli.js';
 ```
 
+我们可以从 [vant-cli changelog](https://github.com/youzan/vant/blob/main/packages/vant-cli/changelog.md)得知，最新7.x版本，采用了 `rsbuild`，作为打包构建工具，弃用了原有的 `vite`。
+
+[rsbuild output.sourceMap](https://rsbuild.dev/zh/config/output/source-map)
+
+```js
+// 类型
+type SourceMap = {
+  js?: RspackConfig['devtool'];
+  css?: boolean;
+};
+// 默认值
+const defaultSourceMap = {
+  js: isDev ? 'cheap-module-source-map' : false,
+  css: false,
+};
+```
+
+可以搜索 `vant-v4.8/packages/vant-cli` 项目中的搜索 `sourceMap` 知道配置开启 `sourceMap`。
+
+```js
+output: {
+    assetPrefix,
+    // make compilation faster
+    sourceMap: {
+        // 代码里是js false，关闭，可以关闭，启用默认值
+        // js: false,
+        css: false,
+    },
+}
+```
+
 往期讲述了很多工具函数和脚手架相关的等，所以在此不再赘述。
 
 ### 3.1 利用 demo 调试源码
@@ -103,7 +134,51 @@ import './lib/cli.js';
 
 带着问题我们直接找到 `highlight demo` 文件：`vant/packages/vant/src/highlight/demo/index.vue`。为什么是这个文件，我在之前文章[跟着 vant4 源码学习如何用 vue3+ts 开发一个 loading 组件，仅88行代码](https://juejin.cn/post/7160465286036979748#heading-3)分析了其原理，感兴趣的小伙伴点击查看。这里就不赘述了。
 
-配置 sourcemap。
+```js
+// vant-v4.8/packages/vant/src/highlight/demo/index.vue
+<script setup lang="ts">
+import VanHighlight from '..';
+import { useTranslate } from '../../../docs/site';
+
+const t = useTranslate({
+  'zh-CN': {
+    text1: '慢慢来，不要急，生活给你出了难题，可也终有一天会给出答案。',
+    keywords1: '难题',
+    keywords2: ['难题', '终有一天', '答案'],
+    keywords3: '生活',
+    multipleKeywords: '多字符匹配',
+    highlightClass: '设置高亮标签类名',
+  },
+  'en-US': {
+    text1:
+      'Take your time and be patient. Life itself will eventually answer all those questions it once raised for you.',
+    keywords1: 'questions',
+    keywords2: ['time', 'life', 'answer'],
+    keywords3: 'life',
+    multipleKeywords: 'Multiple Keywords',
+    highlightClass: 'Highlight Class Name',
+  },
+});
+</script>
+
+<template>
+  <demo-block :title="t('basicUsage')">
+    <van-highlight :keywords="t('keywords1')" :source-string="t('text1')" />
+  </demo-block>
+
+  <demo-block :title="t('multipleKeywords')">
+    <van-highlight :keywords="t('keywords2')" :source-string="t('text1')" />
+  </demo-block>
+
+  <demo-block :title="t('highlightClass')">
+    <van-highlight
+      :keywords="t('keywords3')"
+      :source-string="t('text1')"
+      highlight-class="custom-class"
+    />
+  </demo-block>
+</template>
+```
 
 ## 4. 高亮
 
