@@ -8,7 +8,7 @@
 
 相比于原生 `JS` 等源码。我们或许更应该学习，正在使用的组件库的源码，因为有助于帮助我们写业务和写自己的组件。
 
-如果是 `Vue` 技术栈，开发移动端的项目，大多会选用 `vant` 组件库，目前（2022-11-29） `star` 多达 `20.5k`，[已经正式发布 4.0 了](https://vant-contrib.gitee.io/vant/#/zh-CN)。我们可以挑选 `vant` 组件库学习，我会写一个[vant 组件库源码系列专栏](https://juejin.cn/column/7140264842954276871)，欢迎大家关注。
+如果是 `Vue` 技术栈，开发移动端的项目，大多会选用 `vant` 组件库，目前（2024-04-24） `star` 多达 `22.7k`，[已经正式发布 4.8.11 了](https://vant-contrib.gitee.io/vant/#/zh-CN)。我们可以挑选 `vant` 组件库学习，我会写一个[vant 组件库源码系列专栏](https://juejin.cn/column/7140264842954276871)，欢迎大家关注。
 
 **vant 组件库源码分析系列：**
 
@@ -18,7 +18,7 @@
 - 4.[分析 vant 4 源码，学会用 vue3 + ts 开发毫秒级渲染的倒计时组件，真是妙啊](https://juejin.cn/post/7169003604303413278)
 - 5.[vant 4.0 正式发布了，分析其源码学会用 vue3 写一个图片懒加载组件！](https://juejin.cn/post/7171227417246171149)
 
-这次我们来学习 `Lazyload` 懒加载组件，[可以点此查看 `lazyload` 文档体验](https://vant-contrib.gitee.io/vant/#/zh-CN/lazyload)。
+这次我们来学习 `highlight` 高亮文本组件，[可以点此查看 `highlight` 文档体验](https://vant-ui.github.io/vant/#/zh-CN/highlight)。
 
 学完本文，你将学到：
 
@@ -32,7 +32,7 @@
 
 ### 2.1 克隆源码 && 跑起来
 
-You will need [Node.js >= 14](https://nodejs.org) and [pnpm](https://pnpm.io).
+You will need [Node.js >= 18](https://nodejs.org) and [pnpm](https://pnpm.io).
 
 ```bash
 # 推荐克隆我的项目
@@ -133,8 +133,9 @@ export async function dev() {
 
 对应的源文件是：`vant-v4.8/packages/vant-cli/src/compiler/compile-site.ts`
 
-我们可以从 [vant-cli changelog](https://github.com/youzan/vant/blob/main/packages/vant-cli/changelog.md)得知，最新7.x版本，采用了 `rsbuild`，作为打包构建工具，弃用了原有的 `vite`。
+我们可以从 [vant-cli changelog](https://github.com/youzan/vant/blob/main/packages/vant-cli/changelog.md) 得知，最新 `7.x` 版本，采用了 `rsbuild`，作为打包构建工具，弃用了原有的 `vite`。
 
+这时我们查阅下 `rsbuild` 文档，找到配置 `sourceMap` 的方法。
 [rsbuild output.sourceMap](https://rsbuild.dev/zh/config/output/source-map)
 
 ```js
