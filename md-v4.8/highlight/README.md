@@ -55,6 +55,8 @@ pnpm dev
 
 执行 `pnpm dev` 后，这时我们打开高亮文本组件 `http://localhost:8080/#/zh-CN/highlight`。
 
+![pnpm dev](./images/highlight-dev.png)
+
 ## 3. 调试
 
 ```json
@@ -103,9 +105,13 @@ pnpm dev
 import './lib/cli.js';
 ```
 
+从 `package.json` 中的 `bin` 属性可以看出，`vant-cli` 最终入口文件是`lib/cli.js`。
+
+
 ### lib/cli.js
 
 ```js
+// vant-v4.8/packages/vant-cli/lib/cli.js
 import { Command } from 'commander';
 import { cliVersion } from './index.js';
 const program = new Command();
@@ -120,6 +126,7 @@ program
 ```
 
 ```js
+// vant-v4.8/packages/vant-cli/lib/commands/dev.js
 import { setNodeEnv } from '../common/index.js';
 import { compileSite } from '../compiler/compile-site.js';
 export async function dev() {
@@ -129,9 +136,7 @@ export async function dev() {
 
 ```
 
-<!-- vant-v4.8/packages/vant-cli/lib/compiler/compile-site.js -->
-
-对应的源文件是：`vant-v4.8/packages/vant-cli/src/compiler/compile-site.ts`
+我们可以找到对应的源文件是：`vant-v4.8/packages/vant-cli/src/compiler/compile-site.ts`
 
 我们可以从 [vant-cli changelog](https://github.com/youzan/vant/blob/main/packages/vant-cli/changelog.md) 得知，最新 `7.x` 版本，采用了 `rsbuild`，作为打包构建工具，弃用了原有的 `vite`。
 
@@ -154,6 +159,7 @@ const defaultSourceMap = {
 可以搜索 `vant-v4.8/packages/vant-cli` 项目中的搜索 `sourceMap` 知道配置开启 `sourceMap`。
 
 ```js
+// vant-v4.8/packages/vant-cli/lib/compiler/compile-site.js
 const rsbuildConfig = {
   // 省略若干代码 ...
   output: {
@@ -173,6 +179,8 @@ const rsbuildConfig = {
 ### 3.1 利用 demo 调试源码
 
 带着问题我们直接找到 `highlight demo` 文件：`vant/packages/vant/src/highlight/demo/index.vue`。为什么是这个文件，我在之前文章[跟着 vant4 源码学习如何用 vue3+ts 开发一个 loading 组件，仅88行代码](https://juejin.cn/post/7160465286036979748#heading-3)分析了其原理，感兴趣的小伙伴点击查看。这里就不赘述了。
+
+![文档上的demo](./images/highlight-demo.png)
 
 ```js
 // vant-v4.8/packages/vant/src/highlight/demo/index.vue
@@ -222,6 +230,8 @@ const t = useTranslate({
 
 ## 4. 高亮
 
+### 入口文件 src/highlight/index.ts
+
 ```ts
 // vant-v4.8/packages/vant/src/highlight/index.ts
 import { withInstall } from '../utils';
@@ -244,7 +254,7 @@ declare module 'vue' {
 
 `withInstall` 函数在之前文章[5.1 withInstall 给组件对象添加 install 方法](https://juejin.cn/post/7160465286036979748#heading-10) 也有分析，这里就不赘述了。
 
-我们可以在这些文件，任意位置加上 `debugger` 调试源码。
+### 主文件：src/highlight/Highlight.tsx
 
 例如：
 
@@ -266,6 +276,7 @@ import {
 
 const [name, bem] = createNamespace('highlight');
 
+
 export const highlightProps = {
   autoEscape: truthProp,
   caseSensitive: Boolean,
@@ -279,7 +290,22 @@ export const highlightProps = {
 };
 
 export type HighlightProps = ExtractPropTypes<typeof highlightProps>;
+```
 
+上面代码主要是 `Props` 定义：
+
+定义了一系列 `props`，包括控制高亮的各种配置项，如是否自动转义、是否区分大小写、高亮样式类名等。比如文中图。
+
+![api](./images/api.png)
+
+我们可以在这些文件，任意位置加上 `debugger` 调试源码。比如在 `renderContent` 函数 `debugger` 调试。
+
+![debugger](./images/debugger.png)
+
+如果不知道怎么调试，可以看我之前的文章[新手向：前端程序员必学基本技能——调试JS代码](https://juejin.cn/post/7030584939020042254)
+
+```tsx
+// vant-v4.8/packages/vant/src/highlight/Highlight.tsx
 export default defineComponent({
   name,
 
@@ -287,80 +313,7 @@ export default defineComponent({
 
   setup(props) {
     const highlightChunks = computed(() => {
-      const { autoEscape, caseSensitive, keywords, sourceString } = props;
-      const flags = caseSensitive ? 'g' : 'gi';
-      const _keywords = Array.isArray(keywords) ? keywords : [keywords];
-
-      // generate chunks
-      let chunks = _keywords
-        .filter((keyword) => keyword)
-        .reduce<Array<{ start: number; end: number; highlight: boolean }>>(
-          (chunks, keyword) => {
-            if (autoEscape) {
-              keyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            }
-
-            const regex = new RegExp(keyword, flags);
-
-            let match;
-            while ((match = regex.exec(sourceString))) {
-              const start = match.index;
-              const end = regex.lastIndex;
-
-              if (start >= end) {
-                regex.lastIndex++;
-                continue;
-              }
-
-              chunks.push({
-                start,
-                end,
-                highlight: true,
-              });
-            }
-
-            return chunks;
-          },
-          [],
-        );
-
-      // merge chunks
-      chunks = chunks
-        .sort((a, b) => a.start - b.start)
-        .reduce<typeof chunks>((chunks, currentChunk) => {
-          const prevChunk = chunks[chunks.length - 1];
-
-          if (!prevChunk || currentChunk.start > prevChunk.end) {
-            const unhighlightStart = prevChunk ? prevChunk.end : 0;
-            const unhighlightEnd = currentChunk.start;
-
-            if (unhighlightStart !== unhighlightEnd) {
-              chunks.push({
-                start: unhighlightStart,
-                end: unhighlightEnd,
-                highlight: false,
-              });
-            }
-
-            chunks.push(currentChunk);
-          } else {
-            prevChunk.end = Math.max(prevChunk.end, currentChunk.end);
-          }
-
-          return chunks;
-        }, []);
-
-      const lastChunk = chunks[chunks.length - 1];
-
-      if (lastChunk && lastChunk.end < sourceString.length) {
-        chunks.push({
-          start: lastChunk.end,
-          end: sourceString.length,
-          highlight: false,
-        });
-      }
-
-      return chunks;
+      // 省略这里的代码，后文讲述... 
     });
 
     const renderContent = () => {
@@ -398,39 +351,121 @@ export default defineComponent({
 
 ```
 
-这段源码是一个 Vue 组件，实现了一个名为 highlight 的高亮组件。以下是对这段源码的分析和 highlight 组件实现原理的概述：
+**`setup` 函数：**
 
-分析源码功能：
-Props 定义：
+在 `setup` 函数中，通过 `computed` 创建了一个名为 `highlightChunks` 的 computed 属性，该属性根据传入的关键词在原始字符串中生成并合并高亮块。
+`highlightChunks` 的计算过程包括将关键词转为正则表达式，匹配原始字符串中的位置，并生成含有高亮样式标记的块。
 
-定义了一系列 props，包括控制高亮的各种配置项，如是否自动转义、是否区分大小写、高亮样式类名等。
-setup 函数：
+**`renderContent` 函数：**
 
-在 setup 函数中，通过 computed 创建了一个名为 highlightChunks 的 computed 属性，该属性根据传入的关键词在原始字符串中生成并合并高亮块。
-highlightChunks 的计算过程包括将关键词转为正则表达式，匹配原始字符串中的位置，并生成含有高亮样式标记的块。
-renderContent 函数：
+`renderContent` 函数根据 `highlightChunks` 的结果在原始字符串中提取每个块并生成相应的高亮或非高亮段落。
 
-renderContent 函数根据 highlightChunks 的结果在原始字符串中提取每个块并生成相应的高亮或非高亮段落。
-返回函数：
+**返回函数：**
 
-返回一个渲染函数，在渲染时根据 props 中的设置，生成相应的高亮标签或非高亮标签，并以适当的方式组织和呈现高亮内容。
+返回一个渲染函数，在渲染时根据 `props` 中的设置，生成相应的高亮标签或非高亮标签，并以适当的方式组织和呈现高亮内容。
+
 实现原理概述：
-提取关键字：
+**提取关键字：**
 
 首先，根据传入的关键字（可以是字符串或字符串数组），将其转换为数组形式。
-生成高亮块：
+**生成高亮块：**
 
 遍历关键字数组，根据是否需要转义和是否区分大小写，生成正则表达式进行匹配，找出原始字符串中的关键字位置，并记录下每个关键字的起始和结束位置以及是否需要高亮。
-合并相邻块：
+**合并相邻块：**
 
 将相邻的高亮块合并为一个块，以减少多余的高亮标记。
-生成最终内容：
+**生成最终内容：**
 
 根据高亮块的信息，在原始字符串中按要求插入高亮标签或非高亮标签，形成最终的高亮内容。
-通过这些步骤，highlight 组件实现了在给定字符串中根据关键字进行高亮展示的功能。整体思路是根据关键字生成高亮块，然后在渲染时根据这些块的信息插入合适的标签实现高亮效果。
+通过这些步骤，`highlight` 组件实现了在给定字符串中根据关键字进行高亮展示的功能。整体思路是根据关键字生成高亮块，然后在渲染时根据这些块的信息插入合适的标签实现高亮效果。
 
+### highlightChunks
+
+我们重点分析下 `setup` 中的 `highlightChunks` 函数。
+
+```tsx
+// vant-v4.8/packages/vant/src/highlight/Highlight.tsx
+const highlightChunks = computed(() => {
+  const { autoEscape, caseSensitive, keywords, sourceString } = props;
+  const flags = caseSensitive ? 'g' : 'gi';
+  const _keywords = Array.isArray(keywords) ? keywords : [keywords];
+
+  // generate chunks
+  let chunks = _keywords
+    .filter((keyword) => keyword)
+    .reduce<Array<{ start: number; end: number; highlight: boolean }>>(
+      (chunks, keyword) => {
+        if (autoEscape) {
+          keyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        const regex = new RegExp(keyword, flags);
+
+        let match;
+        while ((match = regex.exec(sourceString))) {
+          const start = match.index;
+          const end = regex.lastIndex;
+
+          if (start >= end) {
+            regex.lastIndex++;
+            continue;
+          }
+
+          chunks.push({
+            start,
+            end,
+            highlight: true,
+          });
+        }
+
+        return chunks;
+      },
+      [],
+    );
+
+  // merge chunks
+  chunks = chunks
+    .sort((a, b) => a.start - b.start)
+    .reduce<typeof chunks>((chunks, currentChunk) => {
+      const prevChunk = chunks[chunks.length - 1];
+
+      if (!prevChunk || currentChunk.start > prevChunk.end) {
+        const unhighlightStart = prevChunk ? prevChunk.end : 0;
+        const unhighlightEnd = currentChunk.start;
+
+        if (unhighlightStart !== unhighlightEnd) {
+          chunks.push({
+            start: unhighlightStart,
+            end: unhighlightEnd,
+            highlight: false,
+          });
+        }
+
+        chunks.push(currentChunk);
+      } else {
+        prevChunk.end = Math.max(prevChunk.end, currentChunk.end);
+      }
+
+      return chunks;
+    }, []);
+
+  const lastChunk = chunks[chunks.length - 1];
+
+  if (lastChunk && lastChunk.end < sourceString.length) {
+    chunks.push({
+      start: lastChunk.end,
+      end: sourceString.length,
+      highlight: false,
+    });
+  }
+
+  return chunks;
+});
+```
 
 ## 8. 加源码共读交流群
+
+作者：常以[若川](https://lxchuan12.gitee.io)为名混迹于江湖。所知甚少，唯善学。
 
 最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎 `follow` [我的 github](https://github.com/ruochuan12)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.7k+人）第一的专栏，写有20余篇源码文章。
 
