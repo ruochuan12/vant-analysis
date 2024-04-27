@@ -57,7 +57,9 @@ pnpm dev
 
 ![pnpm dev](./images/highlight-dev.png)
 
-## 3. 调试
+## 3. pnpm run dev => vant-cli dev
+
+我们从 `package.json` 脚本查看 `dev` 命令。
 
 ```json
 // vant-v4.8/package.json
@@ -76,6 +78,8 @@ pnpm dev
 
 限制了 `pnpm` 版本大于 `9.0.0`，如果运行报版本错误，可以升级（比如：`npm i -g pnpm`） `pnpm` 版本到 `9.x`。
 
+我们继续跟着 `vant/package.json` 脚本查看 `dev` 命令。
+
 ```json
 // vant-v4.8/packages/vant/package.json
 {
@@ -86,6 +90,8 @@ pnpm dev
     }
 }
 ```
+
+我们继续跟着 `vant-cli/package.json` 脚本查看 `bin` 命令。
 
 ```json
 // vant-v4.8/packages/vant-cli/package.json
@@ -107,8 +113,7 @@ import './lib/cli.js';
 
 从 `package.json` 中的 `bin` 属性可以看出，`vant-cli` 最终入口文件是`lib/cli.js`。
 
-
-### lib/cli.js
+### 3.1 lib/cli.js
 
 ```js
 // vant-v4.8/packages/vant-cli/lib/cli.js
@@ -176,7 +181,7 @@ const rsbuildConfig = {
 
 往期讲述了很多工具函数和脚手架相关的等，所以在此不再赘述。
 
-### 3.1 利用 demo 调试源码
+### 3.2 利用 demo 调试源码
 
 带着问题我们直接找到 `highlight demo` 文件：`vant/packages/vant/src/highlight/demo/index.vue`。为什么是这个文件，我在之前文章[跟着 vant4 源码学习如何用 vue3+ts 开发一个 loading 组件，仅88行代码](https://juejin.cn/post/7160465286036979748#heading-3)分析了其原理，感兴趣的小伙伴点击查看。这里就不赘述了。
 
@@ -230,7 +235,7 @@ const t = useTranslate({
 
 ## 4. 高亮
 
-### 入口文件 src/highlight/index.ts
+### 4.1 入口文件 src/highlight/index.ts
 
 ```ts
 // vant-v4.8/packages/vant/src/highlight/index.ts
@@ -254,7 +259,7 @@ declare module 'vue' {
 
 `withInstall` 函数在之前文章[5.1 withInstall 给组件对象添加 install 方法](https://juejin.cn/post/7160465286036979748#heading-10) 也有分析，这里就不赘述了。
 
-### 主文件：src/highlight/Highlight.tsx
+### 4.2 主文件：src/highlight/Highlight.tsx
 
 例如：
 
@@ -326,8 +331,31 @@ export default defineComponent({
       } = props;
 
       return highlightChunks.value.map((chunk) => {
+        /**
+         * highlightChunks.value 调试查看数值
+          [
+            {
+                "start": 0,
+                "end": 14,
+                "highlight": false
+            },
+            {
+                "start": 14,
+                "end": 16,
+                "highlight": true
+            },
+            {
+                "start": 16,
+                "end": 29,
+                "highlight": false
+            }
+        ]
+         * 
+        */
         const { start, end, highlight } = chunk;
         const text = sourceString.slice(start, end);
+        
+        debugger;
 
         if (highlight) {
           return (
@@ -379,7 +407,7 @@ export default defineComponent({
 根据高亮块的信息，在原始字符串中按要求插入高亮标签或非高亮标签，形成最终的高亮内容。
 通过这些步骤，`highlight` 组件实现了在给定字符串中根据关键字进行高亮展示的功能。整体思路是根据关键字生成高亮块，然后在渲染时根据这些块的信息插入合适的标签实现高亮效果。
 
-### highlightChunks
+### 4.3 highlightChunks 函数
 
 我们重点分析下 `setup` 中的 `highlightChunks` 函数。
 
@@ -463,7 +491,9 @@ const highlightChunks = computed(() => {
 });
 ```
 
-## 8. 加源码共读交流群
+## 5. 总结
+
+## 6. 加源码共读交流群
 
 作者：常以[若川](https://lxchuan12.gitee.io)为名混迹于江湖。所知甚少，唯善学。
 
