@@ -1,4 +1,4 @@
-# 分析 vant 组件库源码，写一个 highlight 高亮文本的组件
+# 分析 vant4 组件库源码，写一个常用的 highlight 高亮文本的组件
 
 ## 1. 前言
 
@@ -23,7 +23,9 @@
 学完本文，你将学到：
 
 ```bash
-1. 
+1. 如何学习组件库的源码
+2. 如何将使用了 rsbuild 的最新版本的 vant-cli 配置开启 sourceMap 进行调试源码
+3. 高亮文本组件的原理和具体实现
 ```
 
 ## 2. 准备工作
@@ -185,7 +187,11 @@ const rsbuildConfig = {
 
 带着问题我们直接找到 `highlight demo` 文件：`vant/packages/vant/src/highlight/demo/index.vue`。为什么是这个文件，我在之前文章[跟着 vant4 源码学习如何用 vue3+ts 开发一个 loading 组件，仅88行代码](https://juejin.cn/post/7160465286036979748#heading-3)分析了其原理，感兴趣的小伙伴点击查看。这里就不赘述了。
 
+文档上的 `demo` 图如下：
+
 ![文档上的demo](./images/highlight-demo.png)
+
+对应的是以下代码：
 
 ```js
 // vant-v4.8/packages/vant/src/highlight/demo/index.vue
@@ -235,6 +241,8 @@ const t = useTranslate({
 
 ## 4. 高亮
 
+我们可以看到入口文件 `src/highlight/index.ts`。
+
 ### 4.1 入口文件 src/highlight/index.ts
 
 ```ts
@@ -259,9 +267,9 @@ declare module 'vue' {
 
 `withInstall` 函数在之前文章[5.1 withInstall 给组件对象添加 install 方法](https://juejin.cn/post/7160465286036979748#heading-10) 也有分析，这里就不赘述了。
 
-### 4.2 主文件：src/highlight/Highlight.tsx
+我们可以继续看主文件 `src/highlight/Highlight.tsx`。
 
-例如：
+### 4.2 主文件 src/highlight/Highlight.tsx
 
 ```tsx
 // vant-v4.8/packages/vant/src/highlight/Highlight.tsx
@@ -299,11 +307,11 @@ export type HighlightProps = ExtractPropTypes<typeof highlightProps>;
 
 上面代码主要是 `Props` 定义：
 
-定义了一系列 `props`，包括控制高亮的各种配置项，如是否自动转义、是否区分大小写、高亮样式类名等。比如文中图。
+定义了一系列 `props`，包括控制高亮的各种配置项，如是否自动转义、是否区分大小写、高亮样式类名等。可直接参见文档中的`API`属性。
 
 ![api](./images/api.png)
 
-我们可以在这些文件，任意位置加上 `debugger` 调试源码。比如在 `renderContent` 函数 `debugger` 调试。
+我们可以在这些文件，任意位置加上 `debugger` 调试源码。比如在 `renderContent` 函数 `debugger` 调试。如下图所示：
 
 ![debugger](./images/debugger.png)
 
@@ -323,7 +331,9 @@ export default defineComponent({
 
     const renderContent = () => {
       const {
+        // 慢慢来，不要急，生活给你出了难题，可也终有一天会给出答案。
         sourceString,
+        // 高亮和非高亮样式名和标签名
         highlightClass,
         unhighlightClass,
         highlightTag,
@@ -353,6 +363,7 @@ export default defineComponent({
          * 
         */
         const { start, end, highlight } = chunk;
+        // 取出文本
         const text = sourceString.slice(start, end);
         
         debugger;
@@ -379,9 +390,14 @@ export default defineComponent({
 
 ```
 
+这段代码不多，就是把高亮的文本组成一个新的标签，可以支持自定义标签和自定义`class`，渲染结果如下图所示：
+
+![render-dom-demo](./images/render-dom-demo.png)
+
 **`setup` 函数：**
 
-在 `setup` 函数中，通过 `computed` 创建了一个名为 `highlightChunks` 的 computed 属性，该属性根据传入的关键词在原始字符串中生成并合并高亮块。
+在 `setup` 函数中，通过 `computed` 创建了一个名为 `highlightChunks` 的 `computed` 属性，该属性根据传入的关键词在原始字符串中生成并合并高亮块。
+
 `highlightChunks` 的计算过程包括将关键词转为正则表达式，匹配原始字符串中的位置，并生成含有高亮样式标记的块。
 
 **`renderContent` 函数：**
@@ -393,18 +409,23 @@ export default defineComponent({
 返回一个渲染函数，在渲染时根据 `props` 中的设置，生成相应的高亮标签或非高亮标签，并以适当的方式组织和呈现高亮内容。
 
 实现原理概述：
+
 **提取关键字：**
 
 首先，根据传入的关键字（可以是字符串或字符串数组），将其转换为数组形式。
+
 **生成高亮块：**
 
 遍历关键字数组，根据是否需要转义和是否区分大小写，生成正则表达式进行匹配，找出原始字符串中的关键字位置，并记录下每个关键字的起始和结束位置以及是否需要高亮。
+
 **合并相邻块：**
 
 将相邻的高亮块合并为一个块，以减少多余的高亮标记。
+
 **生成最终内容：**
 
 根据高亮块的信息，在原始字符串中按要求插入高亮标签或非高亮标签，形成最终的高亮内容。
+
 通过这些步骤，`highlight` 组件实现了在给定字符串中根据关键字进行高亮展示的功能。整体思路是根据关键字生成高亮块，然后在渲染时根据这些块的信息插入合适的标签实现高亮效果。
 
 ### 4.3 highlightChunks 函数
@@ -415,19 +436,26 @@ export default defineComponent({
 // vant-v4.8/packages/vant/src/highlight/Highlight.tsx
 const highlightChunks = computed(() => {
   const { autoEscape, caseSensitive, keywords, sourceString } = props;
+  // 是否区分大小写
   const flags = caseSensitive ? 'g' : 'gi';
+  // 转数组
   const _keywords = Array.isArray(keywords) ? keywords : [keywords];
 
+  // 生成分组
   // generate chunks
   let chunks = _keywords
     .filter((keyword) => keyword)
     .reduce<Array<{ start: number; end: number; highlight: boolean }>>(
       (chunks, keyword) => {
+        // 是否自动转义
         if (autoEscape) {
           keyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
 
+        // 用正则匹配
         const regex = new RegExp(keyword, flags);
+
+        // 遍历关键词匹配值，最后生成 [{start, end, highlight: false}] 开始和结束值，高亮与否的数组
 
         let match;
         while ((match = regex.exec(sourceString))) {
@@ -451,6 +479,7 @@ const highlightChunks = computed(() => {
       [],
     );
 
+  // 合并分组
   // merge chunks
   chunks = chunks
     .sort((a, b) => a.start - b.start)
@@ -492,6 +521,14 @@ const highlightChunks = computed(() => {
 ```
 
 ## 5. 总结
+
+本文主要讲述了，如何阅读组件库的源码，如何将使用了 `rsbuild` 的最新版本的 `vant-cli` 配置开启 `sourceMap` 进行调试源码。
+
+学习了高亮文本组件的原理和具体实现。
+
+组件代码虽不多，但实现相对比较优雅。
+
+学会写一个组件就能学会多个组件。建议自己多打断点调试源码，哪里不懂调试哪里。常看我的源码文章的读者都知道，我经常推荐要自己多动手调试源码，这样印象更为深刻。避免出现看懂了，但动手实践就不知道如何操作了的情况。**纸上得来终觉浅，绝知此事要躬行**。
 
 ## 6. 加源码共读交流群
 
