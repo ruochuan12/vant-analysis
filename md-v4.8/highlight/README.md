@@ -428,11 +428,11 @@ export default defineComponent({
 
 通过以上这些步骤，`highlight` 组件实现了在给定字符串中根据关键词进行高亮展示的功能。
 
-整体思路是根据关键词生成高亮块，然后在渲染时根据这些块的信息插入合适的标签实现高亮效果。
+整体思路是根据关键词通过正则匹配生成高亮块，然后在渲染时根据这些块的信息插入合适的标签和自定义样式名实现高亮效果。
 
 ### 4.3 highlightChunks 函数
 
-我们重点分析下 `setup` 中的 `highlightChunks` 函数。
+我们简单分析下 `setup` 中的 `highlightChunks` 函数。不用细看，可以在自己动手调试源码时再细看。
 
 ```tsx
 // vant-v4.8/packages/vant/src/highlight/Highlight.tsx
@@ -526,7 +526,7 @@ const highlightChunks = computed(() => {
 
 本文主要讲述了，如何阅读组件库的源码，如何将使用了 `rsbuild` 的最新版本的 `vant-cli` 配置开启 `sourceMap` 进行调试源码。
 
-学习了高亮文本组件的原理和具体实现。
+学习了高亮文本组件的原理和具体实现。实现原理是根据关键词通过正则匹配生成高亮块，然后在渲染时根据这些块的信息插入合适的标签和自定义样式名实现高亮效果。
 
 组件代码虽不多，但实现相对比较优雅。
 
