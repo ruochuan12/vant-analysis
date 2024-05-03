@@ -62,7 +62,7 @@ pnpm dev
 
 执行 `pnpm dev` 后，这时我们打开高亮文本组件 `http://localhost:8080/#/zh-CN/highlight`。
 
-![pnpm dev](./images/highlight-dev.png)
+![pnpm dev](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d84d716b5d6642d688f912d8ae7f9c8f~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2052&h=954&s=171967&e=png&b=000000)
 
 ## 3. pnpm run dev => vant-cli dev
 
@@ -194,7 +194,7 @@ const rsbuildConfig = {
 
 文档上的 `demo` 图如下：
 
-![文档上的demo](./images/highlight-demo.png)
+![文档上的demo](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f81f7e26019142fdaddb5795800f8c9b~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=742&h=1332&s=106987&e=png&b=ffffff)
 
 对应的是以下代码：
 
@@ -314,11 +314,11 @@ export type HighlightProps = ExtractPropTypes<typeof highlightProps>;
 
 定义了一系列 `props`，包括控制高亮的各种配置项，如是否自动转义、是否区分大小写、高亮样式类名等。可直接参见文档中的`API`属性。
 
-![api](./images/api.png)
+![api](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e34ad677a2274fedb98a915273edbd7f~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2050&h=1188&s=194587&e=png&b=ffffff)
 
 我们可以在这些文件，任意位置加上 `debugger` 调试源码。比如在 `renderContent` 函数 `debugger` 调试。如下图所示：
 
-![debugger](./images/debugger.png)
+![debugger](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9fdc018cb97944ef9dec846ff3a5585e~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3840&h=1912&s=1123797&e=png&b=efeeee)
 
 如果不知道怎么调试，可以看我之前的文章[新手向：前端程序员必学基本技能——调试JS代码](https://juejin.cn/post/7030584939020042254)
 
@@ -397,7 +397,7 @@ export default defineComponent({
 
 这段代码不多，就是把高亮的文本组成一个新的标签，可以支持自定义标签和自定义`class`，渲染结果如下图所示：
 
-![render-dom-demo](./images/render-dom-demo.png)
+![render-dom-demo](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a19fb40a9f2345d8b833be40e0de4d89~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2378&h=1438&s=502847&e=png&b=ffffff)
 
 **`setup` 函数：**
 
