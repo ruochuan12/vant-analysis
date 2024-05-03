@@ -8,7 +8,7 @@
 
 相比于原生 `JS` 等源码。我们或许更应该学习，正在使用的组件库的源码，因为有助于帮助我们写业务和写自己的组件。
 
-如果是 `Vue` 技术栈，开发移动端的项目，大多会选用 `vant` 组件库，目前（2024-04-24） `star` 多达 `22.7k`，[已经正式发布 4.8.11 了](https://vant-contrib.gitee.io/vant/#/zh-CN)。我们可以挑选 `vant` 组件库学习，我会写一个[vant 组件库源码系列专栏](https://juejin.cn/column/7140264842954276871)，欢迎大家关注。
+如果是 `Vue` 技术栈，开发移动端的项目，大多会选用 `vant` 组件库，目前（2024-05-02） `star` 多达 `22.7k`，[已经正式发布 4.9.0](https://vant-ui.github.io/vant/#/zh-CN/changelog)。我们可以挑选 `vant` 组件库学习，我会写一个[vant 组件库源码系列专栏](https://juejin.cn/column/7140264842954276871)，欢迎大家关注。
 
 **vant 组件库源码分析系列：**
 
@@ -39,7 +39,7 @@ You will need [Node.js >= 18](https://nodejs.org) and [pnpm](https://pnpm.io).
 ```bash
 # 推荐克隆我的项目
 git clone https://github.com/lxchuan12/vant-analysis
-cd vant-analysis/vant-v4.8
+cd vant-analysis/vant-v4.x
 
 # 或者克隆官方仓库
 git clone git@github.com:youzan/vant.git
@@ -64,7 +64,7 @@ pnpm dev
 我们从 `package.json` 脚本查看 `dev` 命令。
 
 ```json
-// vant-v4.8/package.json
+// vant-v4.x/package.json
 {
   "private": true,
   "scripts": {
@@ -83,10 +83,10 @@ pnpm dev
 我们继续跟着 `vant/package.json` 脚本查看 `dev` 命令。
 
 ```json
-// vant-v4.8/packages/vant/package.json
+// vant-v4.x/packages/vant/package.json
 {
   "name": "vant",
-  "version": "4.8.11",
+  "version": "4.9.0",
     "scripts": {
         "dev": "vant-cli dev",
     }
@@ -96,10 +96,10 @@ pnpm dev
 我们继续跟着 `vant-cli/package.json` 脚本查看 `bin` 命令。
 
 ```json
-// vant-v4.8/packages/vant-cli/package.json
+// vant-v4.x/packages/vant-cli/package.json
 {
   "name": "@vant/cli",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "type": "module",
   "bin": {
     "vant-cli": "./bin.js"
@@ -108,7 +108,7 @@ pnpm dev
 ```
 
 ```js
-// vant-v4.8/packages/vant-cli/bin.js
+// vant-v4.x/packages/vant-cli/bin.js
 #!/usr/bin/env node
 import './lib/cli.js';
 ```
@@ -118,7 +118,7 @@ import './lib/cli.js';
 ### 3.1 lib/cli.js
 
 ```js
-// vant-v4.8/packages/vant-cli/lib/cli.js
+// vant-v4.x/packages/vant-cli/lib/cli.js
 import { Command } from 'commander';
 import { cliVersion } from './index.js';
 const program = new Command();
@@ -133,7 +133,7 @@ program
 ```
 
 ```js
-// vant-v4.8/packages/vant-cli/lib/commands/dev.js
+// vant-v4.x/packages/vant-cli/lib/commands/dev.js
 import { setNodeEnv } from '../common/index.js';
 import { compileSite } from '../compiler/compile-site.js';
 export async function dev() {
@@ -143,7 +143,7 @@ export async function dev() {
 
 ```
 
-我们可以找到对应的源文件是：`vant-v4.8/packages/vant-cli/src/compiler/compile-site.ts`
+我们可以找到对应的源文件是：`vant-v4.x/packages/vant-cli/src/compiler/compile-site.ts`
 
 我们可以从 [vant-cli changelog](https://github.com/youzan/vant/blob/main/packages/vant-cli/changelog.md) 得知，最新 `7.x` 版本，采用了 `rsbuild`，作为打包构建工具，弃用了原有的 `vite`。
 
@@ -163,10 +163,10 @@ const defaultSourceMap = {
 };
 ```
 
-可以搜索 `vant-v4.8/packages/vant-cli` 项目中的搜索 `sourceMap` 知道配置开启 `sourceMap`。
+可以搜索 `vant-v4.x/packages/vant-cli` 项目中的搜索 `sourceMap` 知道配置开启 `sourceMap`。
 
 ```js
-// vant-v4.8/packages/vant-cli/lib/compiler/compile-site.js
+// vant-v4.x/packages/vant-cli/lib/compiler/compile-site.js
 const rsbuildConfig = {
   // 省略若干代码 ...
   output: {
@@ -194,7 +194,7 @@ const rsbuildConfig = {
 对应的是以下代码：
 
 ```js
-// vant-v4.8/packages/vant/src/highlight/demo/index.vue
+// vant-v4.x/packages/vant/src/highlight/demo/index.vue
 <script setup lang="ts">
 import VanHighlight from '..';
 import { useTranslate } from '../../../docs/site';
@@ -246,7 +246,7 @@ const t = useTranslate({
 ### 4.1 入口文件 src/highlight/index.ts
 
 ```ts
-// vant-v4.8/packages/vant/src/highlight/index.ts
+// vant-v4.x/packages/vant/src/highlight/index.ts
 import { withInstall } from '../utils';
 import _Highlight from './Highlight';
 
@@ -272,7 +272,7 @@ declare module 'vue' {
 ### 4.2 主文件 src/highlight/Highlight.tsx
 
 ```tsx
-// vant-v4.8/packages/vant/src/highlight/Highlight.tsx
+// vant-v4.x/packages/vant/src/highlight/Highlight.tsx
 import {
   defineComponent,
   computed,
@@ -318,7 +318,7 @@ export type HighlightProps = ExtractPropTypes<typeof highlightProps>;
 如果不知道怎么调试，可以看我之前的文章[新手向：前端程序员必学基本技能——调试JS代码](https://juejin.cn/post/7030584939020042254)
 
 ```tsx
-// vant-v4.8/packages/vant/src/highlight/Highlight.tsx
+// vant-v4.x/packages/vant/src/highlight/Highlight.tsx
 export default defineComponent({
   name,
 
@@ -435,7 +435,7 @@ export default defineComponent({
 我们简单分析下 `setup` 中的 `highlightChunks` 函数。不用细看，可以在自己动手调试源码时再细看。
 
 ```tsx
-// vant-v4.8/packages/vant/src/highlight/Highlight.tsx
+// vant-v4.x/packages/vant/src/highlight/Highlight.tsx
 const highlightChunks = computed(() => {
   const { autoEscape, caseSensitive, keywords, sourceString } = props;
   // 是否区分大小写
@@ -509,6 +509,15 @@ const highlightChunks = computed(() => {
     }, []);
 
   const lastChunk = chunks[chunks.length - 1];
+
+  // 没有关键词时，没匹配到 chunks 的时候
+  if (!lastChunk) {
+    chunks.push({
+      start: 0,
+      end: sourceString.length,
+      highlight: false,
+    });
+  }
 
   if (lastChunk && lastChunk.end < sourceString.length) {
     chunks.push({
