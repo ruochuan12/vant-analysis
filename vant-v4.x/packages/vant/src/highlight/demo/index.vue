@@ -4,7 +4,7 @@ import { useTranslate } from '../../../docs/site';
 
 const t = useTranslate({
   'zh-CN': {
-    text1: '慢慢来，不要急，生活给你出了难题，可也终有一天会给出答案。',
+    text1: '慢慢来，不要急，生活给你出了难题，可也终有一天会给出答案。语录答案',
     keywords1: '难题',
     keywords2: ['难题', '终有一天', '答案'],
     keywords3: '生活',

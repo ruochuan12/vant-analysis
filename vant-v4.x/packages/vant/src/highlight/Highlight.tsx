@@ -124,6 +124,8 @@ export default defineComponent({
         const { start, end, highlight } = chunk;
         const text = sourceString.slice(start, end);
 
+        debugger;
+
         if (highlight) {
           return (
             <highlightTag class={[bem('tag'), highlightClass]}>
